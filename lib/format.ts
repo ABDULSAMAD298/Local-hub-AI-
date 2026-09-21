@@ -13,3 +13,9 @@ export function getGreeting() {
   if (hour < 18) return "Good afternoon";
   return "Good evening";
 }
+
+// plan_status has no distinct "trialing" value in the DB — trial is
+// represented by trial_ends_at being in the future.
+export function isTrialing(trialEndsAt: string | null) {
+  return Boolean(trialEndsAt && new Date(trialEndsAt) > new Date());
+}

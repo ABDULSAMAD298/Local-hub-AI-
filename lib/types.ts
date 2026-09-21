@@ -26,7 +26,11 @@ export type ConversationStatus = "active" | "closed" | "follow_up";
 
 export type PlanName = "trial" | "starter" | "growth" | "pro";
 
-export type PlanStatus = "trialing" | "active" | "past_due" | "canceled";
+// Confirmed against the real DB check constraint: when plan='trial', only
+// 'active' | 'trial' | 'inactive' are allowed (NOT 'trialing'). "In trial"
+// is represented by plan_status='active' + trial_ends_at in the future,
+// not by a distinct status value.
+export type PlanStatus = "active" | "inactive" | "past_due" | "canceled";
 
 export type MediaFileType = "video" | "image";
 
@@ -44,6 +48,7 @@ export interface Profile {
   trial_ends_at: string | null;
   stripe_customer_id: string | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Business {
@@ -54,12 +59,14 @@ export interface Business {
   phone_number_id: string | null;
   display_phone: string | null;
   wa_token: string | null;
+  waba_id: string | null;
   knowledge_base: string | null;
   upsell_message: string | null;
   owner_phone: string | null;
   response_threshold_min: number;
   status: BusinessStatus;
   created_at: string;
+  updated_at: string;
 }
 
 export interface BusinessTypeConfigField {

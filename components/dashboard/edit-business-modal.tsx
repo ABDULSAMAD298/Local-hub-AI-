@@ -33,6 +33,7 @@ const editBusinessSchema = z.object({
   responseThresholdMin: z.number().min(5).max(60),
   waToken: z.string().optional(),
   phoneNumberId: z.string().optional(),
+  wabaId: z.string().optional(),
 });
 
 type EditBusinessValues = z.infer<typeof editBusinessSchema>;
@@ -66,6 +67,7 @@ export function EditBusinessModal({
       responseThresholdMin: business.response_threshold_min,
       waToken: business.wa_token ?? "",
       phoneNumberId: business.phone_number_id ?? "",
+      wabaId: business.waba_id ?? "",
     },
   });
 
@@ -85,6 +87,7 @@ export function EditBusinessModal({
         response_threshold_min: values.responseThresholdMin,
         wa_token: values.waToken || null,
         phone_number_id: values.phoneNumberId || null,
+        waba_id: values.wabaId || null,
       })
       .eq("id", business.id);
 
@@ -154,6 +157,11 @@ export function EditBusinessModal({
           <div className="space-y-1.5">
             <Label htmlFor="phoneNumberId">Phone Number ID</Label>
             <Input id="phoneNumberId" {...register("phoneNumberId")} />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="wabaId">WhatsApp Business Account ID</Label>
+            <Input id="wabaId" {...register("wabaId")} />
           </div>
 
           <div className="space-y-1.5">

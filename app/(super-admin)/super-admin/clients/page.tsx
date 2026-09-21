@@ -27,15 +27,18 @@ import {
 import { ServiceToggle } from "@/components/super-admin/service-toggle";
 import { ChangePlanDialog } from "@/components/super-admin/change-plan-dialog";
 import { useSupabase } from "@/components/providers/supabase-provider";
+import { isTrialing } from "@/lib/format";
 import type { Business, Profile } from "@/lib/types";
 
-type StatusFilter = "all" | "active" | "trialing" | "past_due" | "canceled";
+// "Trial" is derived from trial_ends_at, not a plan_status value — the DB
+// only allows active | inactive | past_due | canceled.
+type StatusFilter = "all" | "trial" | "active" | "past_due" | "canceled";
 type SortKey = "date" | "plan" | "businesses";
 
 const STATUS_LABELS: Record<StatusFilter, string> = {
   all: "All",
+  trial: "Trial",
   active: "Active",
-  trialing: "Trial",
   past_due: "Inactive",
   canceled: "Suspended",
 };
@@ -94,7 +97,8 @@ export default function AllClientsPage() {
 
   const filtered = useMemo(() => {
     let result = profiles.filter((p) => {
-      if (status !== "all" && p.plan_status !== status) return false;
+      if (status === "trial" && !isTrialing(p.trial_ends_at)) return false;
+      if (status !== "all" && status !== "trial" && p.plan_status !== status) return false;
       if (search) {
         const q = search.toLowerCase();
         return (p.full_name ?? "").toLowerCase().includes(q) || p.email.toLowerCase().includes(q);

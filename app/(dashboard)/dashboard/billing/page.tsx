@@ -13,6 +13,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { useBusiness } from "@/components/providers/business-provider";
 import { useSupabase } from "@/components/providers/supabase-provider";
 import { PLAN_LIMITS } from "@/lib/plans";
+import { isTrialing } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { PlanName } from "@/lib/types";
 
@@ -86,6 +87,7 @@ export default function BillingPage() {
   const currentPlan = (profile.plan === "trial" ? "starter" : profile.plan) as PlanName;
   const currentLimits =
     currentPlan in PLAN_LIMITS ? PLAN_LIMITS[currentPlan as keyof typeof PLAN_LIMITS] : PLAN_LIMITS.starter;
+  const trialing = isTrialing(profile.trial_ends_at);
   const usagePercent =
     conversationsThisMonth !== null && currentLimits.conversations !== Infinity
       ? Math.min(100, Math.round((conversationsThisMonth / currentLimits.conversations) * 100))
@@ -98,15 +100,15 @@ export default function BillingPage() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-semibold capitalize text-text-primary">{currentPlan} Plan</h2>
-              <Badge variant={profile.plan_status === "trialing" ? "warning" : "success"} className="capitalize">
-                {profile.plan_status}
+              <Badge variant={trialing ? "warning" : "success"} className="capitalize">
+                {trialing ? "Trial" : profile.plan_status}
               </Badge>
             </div>
             <p className="mt-1 text-2xl font-semibold text-text-primary">
               ${currentLimits.price}
               <span className="text-sm font-normal text-text-muted">/mo</span>
             </p>
-            {profile.plan_status === "trialing" && profile.trial_ends_at && (
+            {trialing && profile.trial_ends_at && (
               <p className="mt-1 text-sm text-text-secondary">
                 Trial ends {format(new Date(profile.trial_ends_at), "MMM d, yyyy")}
               </p>

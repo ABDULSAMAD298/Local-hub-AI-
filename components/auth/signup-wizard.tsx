@@ -135,7 +135,7 @@ export function SignupWizard({ businessTypes }: { businessTypes: BusinessTypeCon
         full_name: values.fullName,
         role: "admin",
         plan: values.plan,
-        plan_status: "trialing",
+        plan_status: "active",
         trial_ends_at: trialEndsAt,
       },
       { onConflict: "id" }

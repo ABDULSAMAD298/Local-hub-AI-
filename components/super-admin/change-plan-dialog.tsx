@@ -22,7 +22,7 @@ import { useSupabase } from "@/components/providers/supabase-provider";
 import type { PlanName, PlanStatus } from "@/lib/types";
 
 const PLANS: PlanName[] = ["starter", "growth", "pro"];
-const STATUSES: PlanStatus[] = ["trialing", "active", "past_due", "canceled"];
+const STATUSES: PlanStatus[] = ["active", "inactive", "past_due", "canceled"];
 
 export function ChangePlanDialog({
   profileId,
