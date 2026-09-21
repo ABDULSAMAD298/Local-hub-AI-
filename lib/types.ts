@@ -13,6 +13,15 @@ export type BusinessType =
 
 export type BusinessStatus = "active" | "inactive" | "suspended";
 
+export const BUSINESS_TYPE_LABELS: Record<BusinessType, string> = {
+  real_estate: "Real Estate",
+  restaurant: "Restaurant / Cafe",
+  apparel: "Clothing / T-Shirts",
+  salon: "Salon / Barber",
+  beauty: "Beauty Parlor / Spa",
+  other: "Other Business",
+};
+
 export type ConversationStatus = "active" | "closed" | "follow_up";
 
 export type PlanName = "trial" | "starter" | "growth" | "pro";
