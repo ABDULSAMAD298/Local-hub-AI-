@@ -3,25 +3,67 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-primary: #050b18;
+  --bg-secondary: #0d1526;
+  --bg-tertiary: #111e35;
+  --border: #1a2f52;
+  --accent: #00c6ff;
+  --accent-hover: #00a3cc;
+  --accent-glow: rgba(0, 198, 255, 0.15);
+  --success: #00e87a;
+  --warning: #ffb800;
+  --error: #ff4560;
+  --text-primary: #f0f4ff;
+  --text-secondary: #8899bb;
+  --text-muted: #4a5f80;
+
+  /* shadcn-style semantic aliases, mapped onto the palette above */
+  --background: var(--bg-primary);
+  --foreground: var(--text-primary);
+  --card: var(--bg-secondary);
+  --card-foreground: var(--text-primary);
+  --popover: var(--bg-tertiary);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--accent);
+  --primary-foreground: #001018;
+  --secondary: var(--bg-tertiary);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--bg-tertiary);
+  --muted-foreground: var(--text-secondary);
+  --accent-bg: var(--bg-tertiary);
+  --accent-foreground: var(--text-primary);
+  --destructive: var(--error);
+  --destructive-foreground: var(--text-primary);
+  --input: var(--bg-tertiary);
+  --ring: var(--accent);
+  --radius: 0.75rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-primary);
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .gradient-text {
+    background-image: linear-gradient(135deg, #00c6ff, #0072ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .accent-glow-hover {
+    transition: box-shadow 150ms ease;
+  }
+  .accent-glow-hover:hover {
+    box-shadow: 0 0 20px var(--accent-glow);
   }
 }
