@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EditBusinessModal } from "@/components/dashboard/edit-business-modal";
 import { WhatsappSetupGuide } from "@/components/dashboard/whatsapp-setup-guide";
+import { CreateBusinessForm } from "@/components/business/create-business-form";
+import { useAuth } from "@/components/providers/auth-provider";
 import { useBusiness } from "@/components/providers/business-provider";
 import { BUSINESS_TYPE_LABELS } from "@/lib/types";
 
@@ -18,7 +20,8 @@ const STATUS_VARIANT = {
 } as const;
 
 export default function MyBusinessPage() {
-  const { business, loading } = useBusiness();
+  const { user } = useAuth();
+  const { business, loading, refetch } = useBusiness();
   const [editOpen, setEditOpen] = useState(false);
 
   if (loading) {
@@ -31,12 +34,18 @@ export default function MyBusinessPage() {
   }
 
   if (!business) {
+    if (!user) return null;
     return (
-      <div className="flex h-[60vh] flex-col items-center justify-center gap-2 text-center">
-        <p className="text-lg font-semibold text-text-primary">No business found</p>
-        <p className="max-w-sm text-sm text-text-secondary">
-          Something went wrong during setup — contact support to get your business connected.
-        </p>
+      <div className="mx-auto max-w-2xl space-y-4">
+        <div className="text-center">
+          <p className="text-lg font-semibold text-text-primary">Set up your business</p>
+          <p className="mt-1 text-sm text-text-secondary">
+            Add your business details to start using LocalHub AI.
+          </p>
+        </div>
+        <div className="rounded-card border border-border bg-bg-secondary p-6">
+          <CreateBusinessForm userId={user.id} onCreated={() => refetch()} />
+        </div>
       </div>
     );
   }

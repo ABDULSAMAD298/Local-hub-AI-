@@ -9,11 +9,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ChangePlanDialog } from "@/components/super-admin/change-plan-dialog";
+import { CreateBusinessForm } from "@/components/business/create-business-form";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { useSupabase } from "@/components/providers/supabase-provider";
 import { BUSINESS_TYPE_LABELS } from "@/lib/types";
-import { MessageSquare, Users, Video } from "lucide-react";
+import { MessageSquare, Plus, Users, Video } from "lucide-react";
 import type { Analytics, Business, Profile } from "@/lib/types";
 
 export default function ClientDetailPage({ params }: { params: { id: string } }) {
@@ -24,6 +31,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
   const [conversationCount, setConversationCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
+  const [addBusinessOpen, setAddBusinessOpen] = useState(false);
 
   async function loadData() {
     setLoading(true);
@@ -150,7 +158,13 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold text-text-secondary">Businesses</h2>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-text-secondary">Businesses</h2>
+          <Button size="sm" variant="outline" onClick={() => setAddBusinessOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Add Business
+          </Button>
+        </div>
         {businesses.length === 0 ? (
           <p className="text-sm text-text-muted">No businesses set up yet.</p>
         ) : (
@@ -182,6 +196,22 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
         onOpenChange={setPlanDialogOpen}
         onChanged={loadData}
       />
+
+      <Dialog open={addBusinessOpen} onOpenChange={setAddBusinessOpen}>
+        <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add Business for {profile.full_name ?? profile.email}</DialogTitle>
+          </DialogHeader>
+          <CreateBusinessForm
+            userId={profile.id}
+            onCreated={() => {
+              setAddBusinessOpen(false);
+              loadData();
+            }}
+            onCancel={() => setAddBusinessOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
