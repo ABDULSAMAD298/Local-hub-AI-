@@ -33,11 +33,15 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     setLoading(true);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("businesses")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Failed to load businesses:", error.message);
+    }
 
     setBusinesses((data as Business[]) ?? []);
     setLoading(false);

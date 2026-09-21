@@ -52,7 +52,7 @@ export async function middleware(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    const destination = profile?.role === "super_admin" ? SUPER_ADMIN_PREFIX : DASHBOARD_PREFIX;
+    const destination = profile?.role === "admin" ? SUPER_ADMIN_PREFIX : DASHBOARD_PREFIX;
     return NextResponse.redirect(new URL(destination, request.url));
   }
 
@@ -63,11 +63,11 @@ export async function middleware(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    if (isSuperAdminRoute && profile?.role !== "super_admin") {
+    if (isSuperAdminRoute && profile?.role !== "admin") {
       return NextResponse.redirect(new URL(DASHBOARD_PREFIX, request.url));
     }
 
-    if (isDashboardRoute && profile?.role === "super_admin") {
+    if (isDashboardRoute && profile?.role === "admin") {
       return NextResponse.redirect(new URL(SUPER_ADMIN_PREFIX, request.url));
     }
   }

@@ -43,7 +43,7 @@ export default function SuperAdminOverviewPage() {
   async function loadData() {
     setLoading(true);
     const [{ data: profileData }, { data: businessData }, { data: analyticsData }] = await Promise.all([
-      supabase.from("profiles").select("*").eq("role", "admin").order("created_at", { ascending: false }),
+      supabase.from("profiles").select("*").eq("role", "client").order("created_at", { ascending: false }),
       supabase.from("businesses").select("*"),
       supabase.from("analytics").select("messages_received").eq("date", todayDateString()),
     ]);

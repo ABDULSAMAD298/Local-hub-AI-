@@ -68,7 +68,7 @@ function LoginForm() {
 
     const redirectTo = searchParams.get("redirectTo");
     const destination =
-      redirectTo ?? (profile?.role === "super_admin" ? "/super-admin" : "/dashboard");
+      redirectTo ?? (profile?.role === "admin" ? "/super-admin" : "/dashboard");
 
     router.push(destination);
     router.refresh();

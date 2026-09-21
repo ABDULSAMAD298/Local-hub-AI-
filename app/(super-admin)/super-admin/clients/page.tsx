@@ -61,7 +61,7 @@ export default function AllClientsPage() {
   async function loadData() {
     setLoading(true);
     const [{ data: profileData }, { data: businessData }, { data: analyticsData }] = await Promise.all([
-      supabase.from("profiles").select("*").eq("role", "admin"),
+      supabase.from("profiles").select("*").eq("role", "client"),
       supabase.from("businesses").select("*"),
       supabase.from("analytics").select("business_id, messages_received").eq("date", todayDateString()),
     ]);

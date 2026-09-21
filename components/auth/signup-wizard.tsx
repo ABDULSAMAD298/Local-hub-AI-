@@ -133,7 +133,7 @@ export function SignupWizard({ businessTypes }: { businessTypes: BusinessTypeCon
         id: data.user.id,
         email: values.email,
         full_name: values.fullName,
-        role: "admin",
+        role: "client",
         plan: values.plan,
         plan_status: "active",
         trial_ends_at: trialEndsAt,

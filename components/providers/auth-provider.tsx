@@ -44,14 +44,20 @@ export function AuthProvider({
         return;
       }
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", currentUser.id)
         .single();
 
+      if (error) {
+        // Surface it instead of silently leaving the UI stuck on "Loading…" —
+        // this is exactly how the RLS recursion bug hid itself before.
+        console.error("Failed to load profile:", error.message);
+      }
+
       if (isMounted) {
-        setProfile(data as Profile | null);
+        setProfile((data as Profile | null) ?? null);
         setLoading(false);
       }
     }

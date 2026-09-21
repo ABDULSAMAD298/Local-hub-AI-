@@ -1,7 +1,10 @@
 // Types mirror the existing Supabase schema (see build spec). Do not add fields
 // that aren't backed by a real column — this file is a read model of the DB.
 
-export type UserRole = "super_admin" | "admin";
+// Confirmed against the real DB check constraint: only 'client' | 'admin'
+// are valid — there is no 'super_admin' string. 'admin' is the platform/
+// super-admin tier; 'client' is a regular business-owner account.
+export type UserRole = "client" | "admin";
 
 export type BusinessType =
   | "real_estate"

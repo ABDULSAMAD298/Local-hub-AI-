@@ -44,7 +44,7 @@ export default function RevenuePage() {
   useEffect(() => {
     async function load() {
       setLoading(true);
-      const { data } = await supabase.from("profiles").select("*").eq("role", "admin");
+      const { data } = await supabase.from("profiles").select("*").eq("role", "client");
       setProfiles((data as Profile[]) ?? []);
       setLoading(false);
     }
