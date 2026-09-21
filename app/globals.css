@@ -43,6 +43,14 @@
   border-color: var(--border);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+section[id] {
+  scroll-margin-top: 84px;
+}
+
 body {
   color: var(--text-primary);
   background: var(--bg-primary);
