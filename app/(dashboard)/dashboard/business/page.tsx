@@ -7,9 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EditBusinessModal } from "@/components/dashboard/edit-business-modal";
-import { WhatsappSetupGuide } from "@/components/dashboard/whatsapp-setup-guide";
-import { CreateBusinessForm } from "@/components/business/create-business-form";
-import { useAuth } from "@/components/providers/auth-provider";
+import { PulseDot, WhatsappConnectCard } from "@/components/business/whatsapp-connect-card";
 import { useBusiness } from "@/components/providers/business-provider";
 import { BUSINESS_TYPE_LABELS } from "@/lib/types";
 
@@ -20,7 +18,6 @@ const STATUS_VARIANT = {
 } as const;
 
 export default function MyBusinessPage() {
-  const { user } = useAuth();
   const { business, loading, refetch } = useBusiness();
   const [editOpen, setEditOpen] = useState(false);
 
@@ -33,22 +30,10 @@ export default function MyBusinessPage() {
     );
   }
 
-  if (!business) {
-    if (!user) return null;
-    return (
-      <div className="mx-auto max-w-2xl space-y-4">
-        <div className="text-center">
-          <p className="text-lg font-semibold text-text-primary">Set up your business</p>
-          <p className="mt-1 text-sm text-text-secondary">
-            Add your business details to start using LocalHub AI.
-          </p>
-        </div>
-        <div className="rounded-card border border-border bg-bg-secondary p-6">
-          <CreateBusinessForm userId={user.id} onCreated={() => refetch()} />
-        </div>
-      </div>
-    );
-  }
+  // OnboardingGate shows the setup form until a business exists.
+  if (!business) return null;
+
+  const connected = Boolean(business.phone_number_id && business.display_phone);
 
   return (
     <div className="space-y-6">
@@ -63,9 +48,15 @@ export default function MyBusinessPage() {
           <p className="mt-1 text-sm text-text-secondary">
             {BUSINESS_TYPE_LABELS[business.business_type]}
           </p>
-          <p className="mt-2 font-mono text-sm text-text-muted">
-            {business.display_phone ?? "No number connected yet"}
-          </p>
+          {connected ? (
+            <div className="mt-2 flex items-center gap-2">
+              <PulseDot active={business.status === "active"} />
+              <span className="font-mono text-sm text-text-primary">{business.display_phone}</span>
+              <Badge variant="success">Connected</Badge>
+            </div>
+          ) : (
+            <p className="mt-2 font-mono text-sm text-text-muted">No number connected yet</p>
+          )}
         </div>
         <Button variant="outline" onClick={() => setEditOpen(true)}>
           <Pencil className="h-4 w-4" />
@@ -73,7 +64,7 @@ export default function MyBusinessPage() {
         </Button>
       </div>
 
-      <WhatsappSetupGuide />
+      <WhatsappConnectCard business={business} onConnected={refetch} />
 
       <EditBusinessModal business={business} open={editOpen} onOpenChange={setEditOpen} />
     </div>

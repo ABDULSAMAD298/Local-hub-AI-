@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 
 import { useSupabase } from "@/components/providers/supabase-provider";
@@ -10,12 +10,16 @@ interface AuthContextValue {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  // Re-reads the signed-in user's profile. Needed after creating the profile
+  // row, since the auth-state listener loads it before the row exists.
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue>({
   user: null,
   profile: null,
   loading: true,
+  refreshProfile: async () => {},
 });
 
 export function AuthProvider({
@@ -31,6 +35,15 @@ export function AuthProvider({
   const [user, setUser] = useState<User | null>(initialUser);
   const [profile, setProfile] = useState<Profile | null>(initialProfile);
   const [loading, setLoading] = useState(!initialUser);
+
+  const refreshProfile = useCallback(async () => {
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+    if (!currentUser) return;
+    const { data } = await supabase.from("profiles").select("*").eq("id", currentUser.id).single();
+    setProfile((data as Profile | null) ?? null);
+  }, [supabase]);
 
   useEffect(() => {
     let isMounted = true;
@@ -87,7 +100,7 @@ export function AuthProvider({
   }, [supabase]);
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, profile, loading, refreshProfile }}>{children}</AuthContext.Provider>
   );
 }
 

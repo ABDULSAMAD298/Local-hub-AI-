@@ -14,7 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { PasswordInput } from "@/components/auth/password-input";
+import { useAuth } from "@/components/providers/auth-provider";
 import { useSupabase } from "@/components/providers/supabase-provider";
+import { ensureProfile } from "@/lib/auth/ensure-profile";
 import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
@@ -34,6 +36,7 @@ export default function LoginPage() {
 
 function LoginForm() {
   const supabase = useSupabase();
+  const { refreshProfile } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -59,6 +62,11 @@ function LoginForm() {
       toast.error(error?.message ?? "Could not sign you in.");
       return;
     }
+
+    // First login after confirming email: signup couldn't create the profile
+    // without a session, so do it now. No-op for existing profiles.
+    await ensureProfile(supabase, data.user);
+    await refreshProfile();
 
     const { data: profile } = await supabase
       .from("profiles")
